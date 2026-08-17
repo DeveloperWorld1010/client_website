@@ -21,9 +21,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <div className="glow" />
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className="antialiased">
+        <div className="pointer-glow" aria-hidden="true" />
         <Header />
         <main>{children}</main>
         <Footer />

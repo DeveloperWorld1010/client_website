@@ -1,5 +1,7 @@
 import ContactForm from '@/components/ContactForm';
 import Faq from '@/components/Faq';
+import PageHero from '@/components/PageHero';
+import { ui } from '@/lib/ui';
 
 export const metadata = { title: 'Contact', description: 'Send a Laravel project enquiry to CodeBheem.' };
 
@@ -8,12 +10,53 @@ const faq = [
   { q: 'Can I send credentials through this form?', a: 'Please do not send passwords, private keys or production secrets in the first enquiry. Share sensitive access only through a secure channel after the scope is agreed.' },
 ];
 
+const requests = [
+  ['01', 'Urgent bug', 'Share the error, screenshot, log or steps that reproduce it.'],
+  ['02', 'Feature request', 'Explain what the user should be able to do when the feature is complete.'],
+  ['03', 'Existing project', 'Mention Laravel version, hosting environment and any important packages.'],
+  ['04', 'Agency support', 'Send the type of backlog or module you want handled and the expected collaboration style.'],
+];
+
 export default function ContactPage() {
-  return <>
-    <section className="page-hero"><div className="container"><div className="breadcrumb">Home / Contact</div><div className="eyebrow">Project enquiry</div><h1 className="title">Tell me what you need <span className="gradient-text">solved.</span></h1><p className="lead">You do not need a perfect specification. A short description of the issue, feature or product is enough to begin.</p></div></section>
-    <section className="section-sm"><div className="container contact-grid"><aside className="contact-panel reveal"><div className="eyebrow">Good requests to send</div><h2 className="title-sm">A useful first message can be simple.</h2><div className="contact-item"><div>01</div><div><strong>Urgent bug</strong><span>Share the error, screenshot, log or steps that reproduce it.</span></div></div><div className="contact-item"><div>02</div><div><strong>Feature request</strong><span>Explain what the user should be able to do when the feature is complete.</span></div></div><div className="contact-item"><div>03</div><div><strong>Existing project</strong><span>Mention Laravel version, hosting environment and any important packages.</span></div></div><div className="contact-item"><div>04</div><div><strong>Agency support</strong><span>Send the type of backlog or module you want handled and the expected collaboration style.</span></div></div></aside>
-      <div className="contact-panel reveal"><div className="eyebrow">Send details</div><h2 className="title-sm">Project enquiry form</h2><ContactForm /></div>
-    </div></section>
-    <section className="section-sm"><div className="container"><Faq items={faq} /></div></section>
-  </>;
+  return (
+    <>
+      <PageHero
+        path="Home / Contact"
+        eyebrow="Project enquiry"
+        title={<>Tell me what you need <span className={ui.gradientText}>solved.</span></>}
+      >
+        <p className={`${ui.lead} mx-auto`}>You do not need a perfect specification. A short description of the issue, feature or product is enough to begin.</p>
+      </PageHero>
+
+      <section className={ui.sectionSm}>
+        <div className={`${ui.container} grid grid-cols-[.8fr_1.2fr] items-start gap-7 max-[980px]:grid-cols-1`}>
+          <aside className={`${ui.panel} reveal`}>
+            <div className={ui.eyebrow}>Good requests to send</div>
+            <h2 className={ui.titleSm}>A useful first message can be simple.</h2>
+            <div>
+              {requests.map(([number, title, text]) => (
+                <div className="flex gap-[13px] border-b border-line py-4 last:border-b-0" key={number}>
+                  <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-brand/15 bg-brand/[.06] text-xs font-black text-brand">{number}</div>
+                  <div>
+                    <strong className="mb-1 block">{title}</strong>
+                    <span className="text-[.9rem] leading-[1.55] text-muted">{text}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
+
+          <div className={`${ui.panel} reveal relative`}>
+            <div className={ui.eyebrow}>Send details</div>
+            <h2 className={ui.titleSm}>Project enquiry form</h2>
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
+      <section className={ui.sectionSm}>
+        <div className={ui.container}><Faq items={faq} /></div>
+      </section>
+    </>
+  );
 }

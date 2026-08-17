@@ -1,4 +1,8 @@
-import Link from 'next/link';
+import Image from 'next/image';
+import CtaBanner from '@/components/CtaBanner';
+import PageHero from '@/components/PageHero';
+import SectionHeading from '@/components/SectionHeading';
+import { ui } from '@/lib/ui';
 
 export const metadata = {
   title: 'Selected Work',
@@ -15,10 +19,55 @@ const projects = [
 ];
 
 export default function PortfolioPage() {
-  return <>
-    <section className="page-hero"><div className="container"><div className="breadcrumb">Home / Work</div><div className="eyebrow">Selected project experience</div><h1 className="title">Built around workflows, not just <span className="gradient-text">screens.</span></h1><p className="lead">These highlights focus on the type of systems and responsibilities handled. No invented performance numbers or fake testimonials — just relevant product work and technical scope.</p></div></section>
-    <section className="section-sm"><div className="container"><div className="grid-2">{projects.map(([image,title,text,tags])=><article className="card case-card reveal" key={title}><div className="case-visual"><img src={image} alt={`${title} visual`} /></div><div className="case-copy"><h3>{title}</h3><p>{text}</p><div className="tags">{tags.map(tag=><span className="tag" key={tag}>{tag}</span>)}</div></div></article>)}</div></div></section>
-    <section className="section"><div className="container"><div className="eyebrow reveal">Capabilities behind the work</div><h2 className="title-sm reveal">What these projects demonstrate</h2><div className="grid-3" style={{marginTop:28}}><div className="card reveal"><h3>Complex business logic</h3><p>Multi-step workflows, roles, approvals, transactions and operational modules beyond simple CRUD screens.</p></div><div className="card reveal"><h3>Existing-system work</h3><p>Comfort working inside established codebases where compatibility, debugging and careful changes matter.</p></div><div className="card reveal"><h3>End-to-end ownership</h3><p>From database and APIs to admin interfaces, integrations, deployment and ongoing production fixes.</p></div></div></div></section>
-    <section className="section-sm"><div className="container"><div className="cta-banner reveal"><div className="eyebrow">Need something similar?</div><h2 className="title-sm">Show me your current system or requirement.</h2><p className="lead">I can join for a focused feature, backlog support, bug fixing or a larger Laravel scope.</p><div style={{marginTop:22}}><Link className="btn btn-primary" href="/contact">Start a conversation →</Link></div></div></div></section>
-  </>;
+  return (
+    <>
+      <PageHero
+        path="Home / Work"
+        eyebrow="Selected project experience"
+        title={<>Built around workflows, not just <span className={ui.gradientText}>screens.</span></>}
+      >
+        <p className={`${ui.lead} mx-auto`}>These highlights focus on the type of systems and responsibilities handled. No invented performance numbers or fake testimonials — just relevant product work and technical scope.</p>
+      </PageHero>
+
+      <section className={ui.sectionSm}>
+        <div className={ui.container}>
+          <div className="grid grid-cols-2 gap-[18px] max-[760px]:grid-cols-1">
+            {projects.map(([image, title, text, tags]) => (
+              <article className={`${ui.card} reveal overflow-hidden p-0`} key={title}>
+                <div className="relative aspect-[16/9] overflow-hidden border-b border-line bg-[linear-gradient(145deg,rgba(83,227,255,.04),rgba(138,125,255,.06))]">
+                  <Image className="object-cover transition duration-500 hover:scale-[1.02]" src={image} alt={`${title} visual`} fill sizes="(max-width: 760px) 100vw, 50vw" />
+                </div>
+                <div className="p-6">
+                  <h3 className="mb-3 text-[1.1rem] font-extrabold">{title}</h3>
+                  <p className="text-[.92rem] leading-[1.7] text-muted">{text}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">{tags.map((tag) => <span className={ui.tag} key={tag}>{tag}</span>)}</div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={ui.section}>
+        <div className={ui.container}>
+          <SectionHeading eyebrow="Capabilities behind the work" small title="What these projects demonstrate" />
+          <div className="mt-7 grid grid-cols-3 gap-[18px] max-[980px]:grid-cols-2 max-[650px]:grid-cols-1">
+            {[
+              ['Complex business logic', 'Multi-step workflows, roles, approvals, transactions and operational modules beyond simple CRUD screens.'],
+              ['Existing-system work', 'Comfort working inside established codebases where compatibility, debugging and careful changes matter.'],
+              ['End-to-end ownership', 'From database and APIs to admin interfaces, integrations, deployment and ongoing production fixes.'],
+            ].map(([title, text]) => (
+              <div className={`${ui.card} reveal`} key={title}><h3 className="mb-3 font-extrabold">{title}</h3><p className="text-[.92rem] leading-[1.7] text-muted">{text}</p></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={ui.sectionSm}>
+        <div className={ui.container}>
+          <CtaBanner eyebrow="Need something similar?" title="Show me your current system or requirement." text="I can join for a focused feature, backlog support, bug fixing or a larger Laravel scope." />
+        </div>
+      </section>
+    </>
+  );
 }

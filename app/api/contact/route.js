@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 const attempts = new Map();
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 6;
+const MAX_BODY_BYTES = 20_000;
 
 function clean(value, max) {
   return String(value ?? '').trim().slice(0, max);
@@ -27,37 +28,41 @@ function validEmail(email) {
 function rateLimited(ip) {
   const now = Date.now();
   const current = attempts.get(ip);
+
   if (!current || now - current.startedAt > WINDOW_MS) {
     attempts.set(ip, { startedAt: now, count: 1 });
     return false;
   }
+
   current.count += 1;
   attempts.set(ip, current);
   return current.count > MAX_ATTEMPTS;
 }
 
-export async function POST(request) {
-  const contentLength = Number(request.headers.get('content-length') || 0);
-  if (contentLength > 20_000) {
-    return NextResponse.json({ message: 'Request is too large.' }, { status: 413 });
-  }
+function json(message, status) {
+  return NextResponse.json({ message }, { status });
+}
 
-  const ip = (request.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
-  if (rateLimited(ip)) {
-    return NextResponse.json({ message: 'Too many attempts. Please wait a few minutes and try again.' }, { status: 429 });
-  }
+export async function POST(request) {
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) return json('Unsupported request format.', 415);
+
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  if (contentLength > MAX_BODY_BYTES) return json('Request is too large.', 413);
+
+  const ip = (request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown')
+    .split(',')[0]
+    .trim();
+  if (rateLimited(ip)) return json('Too many attempts. Please wait a few minutes and try again.', 429);
 
   let raw;
   try {
     raw = await request.json();
   } catch {
-    return NextResponse.json({ message: 'Invalid request.' }, { status: 400 });
+    return json('Invalid request.', 400);
   }
 
-  // Honeypot: real visitors never fill this hidden field.
-  if (clean(raw.website, 200)) {
-    return NextResponse.json({ ok: true });
-  }
+  if (clean(raw.website, 200)) return NextResponse.json({ ok: true });
 
   const data = {
     name: clean(raw.name, 80),
@@ -69,7 +74,7 @@ export async function POST(request) {
   };
 
   if (!data.name || !validEmail(data.email) || !data.service || data.message.length < 10) {
-    return NextResponse.json({ message: 'Please complete your name, valid email, service and project details.' }, { status: 422 });
+    return json('Please complete your name, valid email, service and project details.', 422);
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -78,13 +83,13 @@ export async function POST(request) {
 
   if (!apiKey || !to || !from) {
     console.error('Contact form environment variables are missing.');
-    return NextResponse.json({ message: 'Contact form is not configured yet. Please try again later.' }, { status: 503 });
+    return json('Contact form is not configured yet. Please try again later.', 503);
   }
 
   const safe = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, escapeHtml(value)]));
   const subject = `CodeBheem enquiry: ${data.service} — ${data.name}`.slice(0, 180);
   const text = [
-    `New CodeBheem project enquiry`,
+    'New CodeBheem project enquiry',
     `Name: ${data.name}`,
     `Email: ${data.email}`,
     `Company / project: ${data.company || 'Not provided'}`,
@@ -118,7 +123,7 @@ export async function POST(request) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        'User-Agent': 'CodeBheem-Website/1.0',
+        'User-Agent': 'CodeBheem-Website/2.0',
         'Idempotency-Key': crypto.randomUUID(),
       },
       body: JSON.stringify({
@@ -130,16 +135,17 @@ export async function POST(request) {
         text,
       }),
       cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
     });
   } catch (error) {
     console.error('Resend network error:', error);
-    return NextResponse.json({ message: 'Email service is temporarily unavailable. Please try again.' }, { status: 502 });
+    return json('Email service is temporarily unavailable. Please try again.', 502);
   }
 
   if (!resendResponse.ok) {
     const providerError = await resendResponse.text().catch(() => '');
     console.error('Resend rejected contact email:', resendResponse.status, providerError);
-    return NextResponse.json({ message: 'Could not send your enquiry right now. Please try again.' }, { status: 502 });
+    return json('Could not send your enquiry right now. Please try again.', 502);
   }
 
   return NextResponse.json({ ok: true, message: 'Enquiry sent.' });

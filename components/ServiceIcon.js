@@ -8,5 +8,9 @@ const paths = {
 };
 
 export default function ServiceIcon({ type }) {
-  return <div className="icon-box"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">{paths[type]}</svg></div>;
+  return (
+    <div className="mb-5 grid h-12 w-12 place-items-center rounded-[14px] border border-brand/15 bg-brand/[.07] text-brand shadow-[0_10px_30px_rgba(83,227,255,.08)]">
+      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">{paths[type]}</svg>
+    </div>
+  );
 }
