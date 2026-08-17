@@ -2,7 +2,7 @@ import './globals.css';
 import { Header, Footer } from '@/components/SiteChrome';
 import ClientEffects from '@/components/ClientEffects';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://codebheem.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bheemsharma.vercel.app';
 
 export const metadata = {
   metadataBase: new URL(siteUrl),

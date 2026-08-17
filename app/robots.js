@@ -1,5 +1,5 @@
 export default function robots() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://codebheem.vercel.app';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://bheemsharma.vercel.app';
   return {
     rules: { userAgent: '*', allow: '/' },
     sitemap: `${base}/sitemap.xml`,

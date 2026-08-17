@@ -148,12 +148,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex items-center justify-between gap-5 border-t border-white/[.07] pt-5 text-[.78rem] text-[#71889f] max-[650px]:flex-col max-[650px]:items-start">
+        <div className="mt-10 flex items-center justify-between gap-5 border-t border-white/[.07] pt-5 text-[.78rem] text-[#71889f] max-[650px]:flex-col max-[650px]:text-center">
           <span>© {new Date().getFullYear()} <strong className="font-bold text-[#a9bdcf]">CodeBheem</strong> by Bheem Sharma</span>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <Link className="transition hover:text-[#e9f7ff]" href="/privacy">Privacy</Link>
             <Link className="transition hover:text-[#e9f7ff]" href="/contact">Contact</Link>
-            <Link className="transition hover:text-[#e9f7ff]" href="/sitemap.xml">Sitemap</Link>
+            <a className="transition hover:text-[#e9f7ff]" href="/sitemap.xml">Sitemap</a>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://codebheem.vercel.app';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://bheemsharma.vercel.app';
   return ['', '/services', '/portfolio', '/about', '/pricing', '/contact', '/privacy'].map(path => ({
     url: `${base}${path}`,
     lastModified: new Date(),
