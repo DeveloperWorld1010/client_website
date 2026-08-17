@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -23,6 +24,22 @@ function escapeHtml(value) {
 
 function validEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 120;
+}
+
+function smtpConfig() {
+  const host = clean(process.env.SMTP_HOST, 120);
+  const user = clean(process.env.SMTP_USER, 200);
+  const pass = clean(process.env.SMTP_PASS, 200);
+  const port = Number(process.env.SMTP_PORT || 465);
+
+  if (!host || !user || !pass) return null;
+
+  return {
+    host,
+    port,
+    secure: String(process.env.SMTP_SECURE ?? 'true') !== 'false',
+    auth: { user, pass },
+  };
 }
 
 function rateLimited(ip) {
@@ -77,11 +94,9 @@ export async function POST(request) {
     return json('Please complete your name, valid email, service and project details.', 422);
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
-  const from = process.env.RESEND_FROM_EMAIL;
 
-  if (!apiKey || !to || !from) {
+  if (!to) {
     console.error('Contact form environment variables are missing.');
     return json('Contact form is not configured yet. Please try again later.', 503);
   }
@@ -116,37 +131,37 @@ export async function POST(request) {
       <p style="margin-top:24px;color:#667085;font-size:13px">Reply directly to this email to respond to ${safe.name}.</p>
     </div>`;
 
-  let resendResponse;
+  const smtp = smtpConfig();
+  if (!smtp) {
+    console.error('Contact form SMTP environment variables are missing.');
+    return json('Contact form is not configured yet. Please try again later.', 503);
+  }
+
   try {
-    resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'CodeBheem-Website/2.0',
-        'Idempotency-Key': crypto.randomUUID(),
+    const transporter = nodemailer.createTransport(smtp);
+    const info = await transporter.sendMail({
+      from: process.env.CONTACT_FROM_EMAIL || `CodeBheem <${smtp.auth.user}>`,
+      to,
+      envelope: {
+        from: smtp.auth.user,
+        to,
       },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: data.email,
-        subject,
-        html,
-        text,
-      }),
-      cache: 'no-store',
-      signal: AbortSignal.timeout(10_000),
+      replyTo: data.email,
+      subject,
+      html,
+      text,
     });
+
+    console.info('SMTP email accepted:', JSON.stringify({
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+      response: info.response,
+    }));
+
+    return NextResponse.json({ ok: true, message: 'Enquiry sent.' });
   } catch (error) {
-    console.error('Resend network error:', error);
+    console.error('SMTP email error:', error);
     return json('Email service is temporarily unavailable. Please try again.', 502);
   }
-
-  if (!resendResponse.ok) {
-    const providerError = await resendResponse.text().catch(() => '');
-    console.error('Resend rejected contact email:', resendResponse.status, providerError);
-    return json('Could not send your enquiry right now. Please try again.', 502);
-  }
-
-  return NextResponse.json({ ok: true, message: 'Enquiry sent.' });
 }

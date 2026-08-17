@@ -61,7 +61,7 @@ export default function ContactForm() {
       if (!response.ok) throw new Error(data.message || 'Could not send your enquiry.');
 
       setForm(initial);
-      setState({ status: 'success', message: 'Thanks — your project enquiry has been sent successfully.' });
+      setState({ status: 'success', message: data.message || 'Thanks — your project enquiry has been sent successfully.' });
     } catch (error) {
       const message = error?.name === 'AbortError'
         ? 'The request took too long. Please check your connection and try again.'
