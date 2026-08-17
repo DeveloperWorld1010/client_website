@@ -2,8 +2,14 @@ import ContactForm from '@/components/ContactForm';
 import Faq from '@/components/Faq';
 import PageHero from '@/components/PageHero';
 import { ui } from '@/lib/ui';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Contact', description: 'Send a Laravel project enquiry to CodeBheem.' };
+export const metadata = pageMetadata({
+  title: 'Contact',
+  description: 'Contact CodeBheem to discuss Laravel development, bug fixes, REST APIs, Filament admin work, integrations or maintenance support.',
+  path: '/contact',
+  keywords: ['contact Laravel developer', 'Laravel project enquiry', 'hire Bheem Sharma'],
+});
 
 const faq = [
   { q: 'What happens after I submit?', a: 'Your enquiry is validated by the website server and sent to the configured CodeBheem contact email. You should normally receive a personal reply after the request is reviewed.' },

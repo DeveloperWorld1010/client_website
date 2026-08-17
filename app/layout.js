@@ -1,21 +1,47 @@
 import './globals.css';
 import { Header, Footer } from '@/components/SiteChrome';
 import ClientEffects from '@/components/ClientEffects';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bheemsharma.vercel.app';
+import { siteConfig } from '@/lib/seo';
 
 export const metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: 'CodeBheem | Laravel & PHP Development by Bheem Sharma',
+    default: siteConfig.title,
     template: '%s | CodeBheem',
   },
-  description: 'Laravel, SaaS, APIs, Filament, payment integration, maintenance and deployment support for businesses and agencies.',
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.author }],
+  creator: siteConfig.author,
+  publisher: siteConfig.name,
+  category: 'technology',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   icons: { icon: '/assets/icons/favicon.svg' },
+  keywords: siteConfig.keywords,
+  alternates: { canonical: siteConfig.url },
   openGraph: {
-    title: 'CodeBheem | Laravel & PHP Development by Bheem Sharma',
-    description: 'Laravel, SaaS, APIs, Filament, payment integration, maintenance and deployment support for businesses and agencies.',
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
     type: 'website',
+    images: [{ url: '/assets/icons/codebheem-logo.svg', width: 512, height: 512, alt: 'CodeBheem logo' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ['/assets/icons/codebheem-logo.svg'],
   },
 };
 

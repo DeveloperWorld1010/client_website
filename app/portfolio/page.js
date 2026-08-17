@@ -3,11 +3,14 @@ import CtaBanner from '@/components/CtaBanner';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import { ui } from '@/lib/ui';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Selected Work',
   description: 'Selected Laravel, SaaS, fintech, LMS, e-commerce and ERP project experience by Bheem Sharma.',
-};
+  path: '/portfolio',
+  keywords: ['Laravel portfolio', 'SaaS project experience', 'Laravel case studies'],
+});
 
 const projects = [
   ['/assets/images/project-ngo.svg','Multi-tenant NGO Management SaaS','A multi-module operations product covering donor and donation management, campaigns, programs/projects, CSR, volunteers, tenant branding and administrative workflows.',['Laravel','Filament','Multi-tenancy','MySQL']],

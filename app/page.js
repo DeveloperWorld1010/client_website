@@ -4,6 +4,14 @@ import CtaBanner from '@/components/CtaBanner';
 import SectionHeading from '@/components/SectionHeading';
 import ServiceIcon from '@/components/ServiceIcon';
 import { button, ui } from '@/lib/ui';
+import { pageMetadata, siteConfig } from '@/lib/seo';
+
+export const metadata = pageMetadata({
+  title: siteConfig.title,
+  description: 'Hire Bheem Sharma for Laravel development, PHP bug fixing, REST APIs, Filament admin panels, SaaS modules, integrations and production support.',
+  path: '/',
+  keywords: ['hire Laravel developer', 'Laravel support India', 'PHP freelance developer'],
+});
 
 const services = [
   { id: 'laravel', title: 'Laravel Application Development', text: 'Custom backend development, business workflows, dashboards and scalable application features.' },
@@ -23,8 +31,27 @@ const projects = [
 const stack = ['Laravel','PHP','Filament','MySQL','REST APIs','JavaScript','SaaS','Nginx'];
 
 export default function HomePage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: 'CodeBheem',
+    url: siteConfig.url,
+    founder: {
+      '@type': 'Person',
+      name: 'Bheem Sharma',
+      jobTitle: 'Laravel and PHP Developer',
+    },
+    areaServed: 'Worldwide',
+    serviceType: ['Laravel development', 'PHP development', 'REST API development', 'Filament admin panels', 'Laravel maintenance'],
+    description: metadata.description,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="relative py-[82px_72px] max-[650px]:py-[58px_54px]">
         <div className={`${ui.container} grid grid-cols-[1.08fr_.92fr] items-center gap-16 max-[980px]:grid-cols-1 max-[980px]:gap-[38px]`}>
           <div className="reveal">

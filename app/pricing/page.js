@@ -3,8 +3,14 @@ import Faq from '@/components/Faq';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import { button, ui } from '@/lib/ui';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'Pricing', description: 'Starting prices for Laravel bug fixes, feature sprints and ongoing maintenance support.' };
+export const metadata = pageMetadata({
+  title: 'Pricing',
+  description: 'Starting prices for Laravel bug fixes, feature sprints, API work and ongoing maintenance support by CodeBheem.',
+  path: '/pricing',
+  keywords: ['Laravel pricing', 'Laravel bug fix cost', 'Laravel maintenance pricing'],
+});
 
 const faq = [
   { q: 'Can we begin with a very small task?', a: 'Yes. A contained bug fix or backend change is a good way to test the working relationship before a bigger commitment.' },

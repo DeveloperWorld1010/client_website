@@ -2,8 +2,14 @@ import CtaBanner from '@/components/CtaBanner';
 import PageHero from '@/components/PageHero';
 import SectionHeading from '@/components/SectionHeading';
 import { ui } from '@/lib/ui';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = { title: 'About', description: 'About Bheem Sharma and CodeBheem — Laravel-focused product development and freelance support.' };
+export const metadata = pageMetadata({
+  title: 'About',
+  description: 'About Bheem Sharma and CodeBheem, a Laravel-focused developer service for backend-heavy products, SaaS workflows, APIs and freelance support.',
+  path: '/about',
+  keywords: ['Bheem Sharma developer', 'CodeBheem about', 'Laravel freelancer profile'],
+});
 
 export default function AboutPage() {
   return (

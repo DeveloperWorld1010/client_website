@@ -2,11 +2,14 @@ import Link from 'next/link';
 import CtaBanner from '@/components/CtaBanner';
 import PageHero from '@/components/PageHero';
 import { ui } from '@/lib/ui';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Services',
   description: 'Laravel development, bug fixing, APIs, Filament SaaS, integrations, maintenance and deployment support.',
-};
+  path: '/services',
+  keywords: ['Laravel services', 'Laravel API development', 'Laravel deployment support'],
+});
 
 const services = [
   ['laravel','01 · Core Development','Laravel application development','Business logic, admin workflows and backend features built for clarity, security and future maintenance.',['Custom Laravel modules','Business workflow automation','Authentication & authorization','Database design & migrations','Queues, jobs & scheduled tasks','Existing codebase enhancements']],
